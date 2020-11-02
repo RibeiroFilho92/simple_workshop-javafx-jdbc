@@ -65,7 +65,7 @@ public class DepartmentFormController implements Initializable {
 			entity = getFormData();
 			ds.saveOrUpdate(entity);
 			noritfyDataChangeListeners();
-			Utils.currenteStage(event).close();
+			Utils.currentStage(event).close();
 		}
 		catch (ValidationException e) {
 			setErrorMessages(e.getErrors());
@@ -100,7 +100,7 @@ public class DepartmentFormController implements Initializable {
 	}
 	@FXML
 	public void onBtCancelAction(ActionEvent event) {
-		Utils.currenteStage(event).close();
+		Utils.currentStage(event).close();
 	}
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
