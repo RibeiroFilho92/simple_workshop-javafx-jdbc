@@ -3,7 +3,9 @@ package graphical_user_interface;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import JDBC.DBException;
 import graphical_user_interface.listeners.DataChangeListener;
@@ -18,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Department;
+import model.exceptions.ValidationException;
 import model.services.DepartmentService;
 
 public class DepartmentFormController implements Initializable {
@@ -64,6 +67,9 @@ public class DepartmentFormController implements Initializable {
 			noritfyDataChangeListeners();
 			Utils.currenteStage(event).close();
 		}
+		catch (ValidationException e) {
+			setErrorMessages(e.getErrors());
+		}
 		catch (DBException e) {
 			Alerts.showAlert("Error sanving object", null, e.getMessage(), AlertType.ERROR);
 		}
@@ -79,8 +85,16 @@ public class DepartmentFormController implements Initializable {
 	private Department getFormData() {
 		
 		Department dp = new Department();
+		ValidationException exception = new ValidationException("Error on validation, please verify");
+		
 		dp.setID(Utils.tryParseToInt(txtID.getText()));
+		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
+			exception.addError("name", "Empty fild, please, insert valid data.");
+		}
 		dp.setName(txtName.getText());
+		if (exception.getErrors().size() > 0) {
+			throw exception;
+		}
 		
 		return dp;
 	}
@@ -104,6 +118,15 @@ public class DepartmentFormController implements Initializable {
 		}
 		txtID.setText(String.valueOf(entity.getID()));
 		txtName.setText(entity.getName());
+	}
+	
+	private void setErrorMessages(Map<String, String> errors) {
+		Set<String> fields = errors.keySet();
+		
+		if (fields.contains("name")) {
+			labelErrorName.setText(errors.get("name"));
+		}
+		
 	}
 
 }
