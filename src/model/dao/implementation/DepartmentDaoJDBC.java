@@ -10,6 +10,7 @@ import java.util.List;
 
 import JDBC.DB;
 import JDBC.DBException;
+import JDBC.DBIntegrityException;
 import model.dao.DepartmentDao;
 import model.entities.Department;
 
@@ -94,7 +95,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			
 		}
 		catch (SQLException e) {
-			throw new DBException(e.getMessage());
+			throw new DBIntegrityException(e.getMessage());
 		}
 		finally {
 			DB.closeStatement(st);
