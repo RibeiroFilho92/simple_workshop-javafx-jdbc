@@ -9,6 +9,8 @@ public class Department implements Serializable {
 	private Integer ID;
 	private String name;
 	
+	public Department() {};
+	
 	public Department(Integer ID, String name) {
 		this.ID = ID;
 		this.name = name;
