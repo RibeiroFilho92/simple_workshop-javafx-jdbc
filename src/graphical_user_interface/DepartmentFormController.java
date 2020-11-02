@@ -1,9 +1,12 @@
 package graphical_user_interface;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import JDBC.DBException;
+import graphical_user_interface.listeners.DataChangeListener;
 import graphical_user_interface.util.Alerts;
 import graphical_user_interface.util.Constraints;
 import graphical_user_interface.util.Utils;
@@ -20,6 +23,8 @@ import model.services.DepartmentService;
 public class DepartmentFormController implements Initializable {
 	
 	private DepartmentService ds;
+	
+	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
 	
 	private Department entity;
 	@FXML
@@ -42,6 +47,10 @@ public class DepartmentFormController implements Initializable {
 		this.ds = ds;
 	}
 	
+	public void subscribeDataChangeListener(DataChangeListener dcl) {
+		dataChangeListeners.add(dcl);
+	}
+	
 	public void onBtSaveAction(ActionEvent event) {
 		if (entity == null) {
 			throw new IllegalStateException("The value of entity is null");
@@ -52,6 +61,7 @@ public class DepartmentFormController implements Initializable {
 		try {
 			entity = getFormData();
 			ds.saveOrUpdate(entity);
+			noritfyDataChangeListeners();
 			Utils.currenteStage(event).close();
 		}
 		catch (DBException e) {
@@ -59,6 +69,13 @@ public class DepartmentFormController implements Initializable {
 		}
 	}
 	
+	private void noritfyDataChangeListeners() {
+		
+		for (DataChangeListener dcl : dataChangeListeners) {
+			dcl.onDataChange();
+		}
+	}
+
 	private Department getFormData() {
 		
 		Department dp = new Department();
